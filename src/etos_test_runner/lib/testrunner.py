@@ -175,12 +175,23 @@ class TestRunner:
         """
         verdict_rule_file = os.getenv("VERDICT_RULE_FILE")
         custom_verdict = None
+        verdict_rule_file = "verdict_rules.json"
         if verdict_rule_file is not None:
+            rules = [
+                {
+                    "description": "Test collection error, no artifacts created",
+                    "condition": {
+                        "test_framework_exit_code": 4,
+                    },
+                    "conclusion": "FAILED",
+                    "verdict": "FAILED",
+                }
+            ]
             test_framework_output = {
                 "test_framework_exit_code": test_framework_exit_code,
             }
-            with open(os.getenv("VERDICT_RULE_FILE"), "r") as inp:
-                rules = json.load(inp)
+            # with open(os.getenv("VERDICT_RULE_FILE"), "r") as inp:
+            #     rules = json.load(inp)
             cvm = CustomVerdictMatcher(rules, test_framework_output)
             custom_verdict = cvm.evaluate()
         if None not in(verdict_rule_file, custom_verdict):

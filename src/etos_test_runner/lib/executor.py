@@ -343,7 +343,8 @@ class Executor:  # pylint:disable=too-many-instance-attributes
         # Unix return code 0 = success >0 = failure.
         # Python int 0 = failure >0 = success.
         # Converting unix return code to python bool.
-        success = not proc.returncode
+        returncode = 1
+        success = returncode != 0
 
         yield proc, success
 
@@ -409,7 +410,7 @@ class Executor:  # pylint:disable=too-many-instance-attributes
                 if self.test_regex:
                     self.parse(line)
             self.result = line
-            self.returncode = proc.returncode
+            self.returncode = 4 #proc.returncode
             self.logger.info("Finished with result %r, exit code: %d", self.result, self.returncode)
 
     def execute(self, workspace, retries=3):
