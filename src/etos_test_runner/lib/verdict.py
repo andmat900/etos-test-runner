@@ -52,8 +52,21 @@ class CustomVerdictMatcher:
     def __init__(self, rules: list) -> None:
         """Create new instance."""
         self.rules = rules
+
+        self.rules = [
+            {
+                "description": "Test collection error, no artifacts created",
+                "condition": {
+                    "test_framework_exit_code": 0,
+                },
+                "conclusion": "FAILED",
+                "verdict": "FAILED",
+            }
+        ]
+
+
         for rule in self.rules:
-            if rule.keys() != self.REQUIRED_RULE_KEYWORDS:
+            if set(rule.keys()) != self.REQUIRED_RULE_KEYWORDS:
                 raise ValueError(
                     f"Unsupported rule definition: {rule}. "
                     "Required keywords: {self.REQUIRED_RULE_KEYWORDS}"
