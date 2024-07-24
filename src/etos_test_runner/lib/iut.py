@@ -46,7 +46,18 @@ class Iut:  # pylint: disable=too-few-public-methods
         self._product_dict = product
         self.jsontas = JsonTas()
         self.jsontas.dataset.add("iut", self._product_dict)
+        self.logger.info(f"_product_dict: {self._product_dict}")
+        self.logger.info(f"SELF dir: {dir(self)}")
+
         self.prepare()
+        try:
+            self.logger.info(f"EXTRA DEVICES SET: {hasattr(self, 'extra_devices')}")
+            self.logger.info(f"EXTRA DEVICES: {self.extra_devices}")
+            self.logger.info(f"EXTRA DEVICES IP: {self.extra_devices[0]['ip_addr']}")
+            self.logger.info(f"EXTRA DEVICES MAC: {self.extra_devices[0]['mac_addr']}")
+        except:
+            self.logger.info("failed to access extra devices")
+            pass
 
     def prepare(self):
         """Prepare IUT for testing."""
@@ -75,6 +86,7 @@ class Iut:  # pylint: disable=too-few-public-methods
         :param environment: Environment variables to set.
         :type environment: dict
         """
+        Iut.logger.info(f"ENVS {environment}")
         for key, value in environment.items():
             os.environ[key] = value
 
