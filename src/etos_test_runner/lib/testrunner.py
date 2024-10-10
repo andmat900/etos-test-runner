@@ -54,13 +54,13 @@ class TestRunner:
         self.etos.config.set("iut", self.iut)
         self.plugins = self.etos.config.get("plugins")
 
-        verdict_rule_file = os.getenv("VERDICT_RULE_FILE")
+        verdict_rule_file = os.getenv("VERDICT_RULES_FILE")
         if verdict_rule_file is not None:
             with open(verdict_rule_file, "r", encoding="utf-8") as inp:
                 rules = json.load(inp)
         else:
             rules = []
-
+        self.logger.info("Loaded verdict rules: %s", rules)
         self.verdict_matcher = CustomVerdictMatcher(rules)
 
     def test_suite_started(self):
@@ -128,7 +128,7 @@ class TestRunner:
                 if not executor.result:
                     result = executor.result
                 self.logger.info(
-                    "Test finished. Result: %s. Test framework exit code: %d",
+                    "Test finished. Result: %s. _ exit code: %d",
                     executor.result,
                     executor.returncode,
                 )
@@ -156,7 +156,9 @@ class TestRunner:
         test_framework_output = {
             "test_framework_exit_codes": test_framework_exit_codes,
         }
+        self.logger.info("Test framework output: %s", test_framework_output)
         custom_verdict = self.verdict_matcher.evaluate(test_framework_output)
+        self.logger.info("Custom verdict: %s", custom_verdict)
         if custom_verdict is not None:
             conclusion = custom_verdict["conclusion"]
             verdict = custom_verdict["verdict"]
