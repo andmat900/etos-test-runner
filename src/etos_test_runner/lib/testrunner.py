@@ -245,24 +245,32 @@ class TestRunner:
         description = None
         executed = False
         test_framework_exit_codes = []
+        outcome = None
         try:
             with Workspace(self.log_area) as workspace:
-                self.logger.info("Start IUT monitoring.")
-                self.iut_monitoring.start_monitoring()
-                self.logger.info("Starting test executor.")
-                result, test_framework_exit_codes = self.run_tests(workspace)
-                executed = True
-                self.logger.info("Stop IUT monitoring.")
-                self.iut_monitoring.stop_monitoring()
-        except Exception as exception:  # pylint:disable=broad-except
-            result = False
-            executed = False
-            description = str(exception)
-            raise
+                try:
+                    self.logger.info("Start IUT monitoring.")
+                    self.iut_monitoring.start_monitoring()
+                    self.logger.info("Starting test executor.")
+                    result, test_framework_exit_codes = self.run_tests(workspace)
+                    executed = True
+                    self.logger.info("Stop IUT monitoring.")
+                    self.iut_monitoring.stop_monitoring()
+                except Exception as exception:  # pylint:disable=broad-except
+                    result = False
+                    executed = False
+                    description = str(exception)
+                    raise
+                finally:
+                    if self.iut_monitoring.monitoring:
+                        self.logger.info("Stop IUT monitoring.")
+                        self.iut_monitoring.stop_monitoring()
+                    self.logger.info("Figure out test outcome.")
+                    outcome = self.outcome(result, executed, description, test_framework_exit_codes)
+                    pprint(outcome)
+                    self.logger.info("Call on_test_suite_finished plugin handlers.")
+                    self._test_suite_finished(self.config.get("name"), outcome)
         finally:
-            if self.iut_monitoring.monitoring:
-                self.logger.info("Stop IUT monitoring.")
-                self.iut_monitoring.stop_monitoring()
             self.logger.info(
                 "Log area upload finished. Total uploaded: %d (%d log(s), %d artifact(s))",
                 len(self.log_area.logs) + len(self.log_area.artifacts),
@@ -270,12 +278,11 @@ class TestRunner:
                 len(self.log_area.artifacts),
                 extra={"user_log": True},
             )
-            self.logger.info("Figure out test outcome.")
-            outcome = self.outcome(result, executed, description, test_framework_exit_codes)
-            pprint(outcome)
-
+            if outcome is None:
+                self.logger.info("Figure out test outcome.")
+                outcome = self.outcome(result, executed, description, test_framework_exit_codes)
+                pprint(outcome)
             self.logger.info("Send test suite finished event.")
-            self._test_suite_finished(self.config.get("name"), outcome)
             test_suite_finished = self.etos.events.send_test_suite_finished(
                 test_suite_started,
                 links={"CONTEXT": self.etos.config.get("context")},
