@@ -27,6 +27,14 @@ from etos_test_runner.lib.workspace import Workspace
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 
+def _mock_log_area():
+    """Create a mock log area with proper attributes for Workspace."""
+    mock = Mock()
+    mock.logs = []
+    mock.artifacts = []
+    return mock
+
+
 class TestWorkspace(TestCase):
     """Tests for the workspace library."""
 
@@ -81,7 +89,7 @@ class TestWorkspace(TestCase):
             4. Verify that the workspace library compressed the main workspace directory.
         """
         self.logger.info("STEP: Initialize the workspace library as a context manager.")
-        with Workspace(Mock()) as workspace:
+        with Workspace(_mock_log_area()) as workspace:
             self.workspace = workspace
             self.logger.info(
                 "STEP: Verify that the workspace library created the main workspace directory."
@@ -158,7 +166,7 @@ class TestWorkspace(TestCase):
             3. Verify that directory was created and changed to.
         """
         self.logger.info("STEP: Initialize the workspace.")
-        with Workspace(Mock()) as workspace:
+        with Workspace(_mock_log_area()) as workspace:
             self.workspace = workspace
 
             self.logger.info("STEP: Enter test directory in a context manager.")
@@ -184,7 +192,7 @@ class TestWorkspace(TestCase):
             5. Verify that the folder was re-used.
         """
         self.logger.info("STEP: Initialize the workspace.")
-        with Workspace(Mock()) as workspace:
+        with Workspace(_mock_log_area()) as workspace:
             self.workspace = workspace
 
             self.logger.info(
@@ -233,7 +241,7 @@ class TestWorkspace(TestCase):
             calls.append(1)
 
         self.logger.info("STEP: Initialize the workspace.")
-        with Workspace(Mock()) as workspace:
+        with Workspace(_mock_log_area()) as workspace:
             self.workspace = workspace
 
             self.logger.info("STEP: Enter a test directory with a method call registered.")

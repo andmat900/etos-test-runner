@@ -77,6 +77,14 @@ class Workspace:
                 }
             ]
         )
+        total_uploads = len(self.log_area.logs) + len(self.log_area.artifacts)
+        self.logger.info(
+            "Log area upload finished. Total uploaded: %d (%d log(s), %d artifact(s))",
+            total_uploads,
+            len(self.log_area.logs),
+            len(self.log_area.artifacts),
+            extra={"user_log": True},
+        )
 
     def add_to_full_log(self, report):
         """Add text in report to the full global log.
