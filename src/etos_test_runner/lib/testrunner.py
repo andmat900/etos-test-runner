@@ -248,6 +248,8 @@ class TestRunner:
         outcome = None
         try:
             with Workspace(self.log_area) as workspace:
+                # Inner try/finally ensures plugin handlers run before
+                # Workspace.__exit__ uploads artifacts.
                 try:
                     self.logger.info("Start IUT monitoring.")
                     self.iut_monitoring.start_monitoring()
