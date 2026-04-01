@@ -174,12 +174,6 @@ class LogArea:
             self.event_publisher.publish(event)
             self.logs.append(log)
             log["file"].unlink()
-        if logs:
-            self.logger.info(
-                "Successfully uploaded %d log(s) to log area",
-                len(logs),
-                extra={"user_log": True},
-            )
 
     def _artifact_created(self, artifacts):
         """Send artifact created event.
@@ -268,11 +262,6 @@ class LogArea:
         }
         published_url = upload["url"].format(**data)
         self._artifact_published(artifact_created, published_url)
-        self.logger.info(
-            "Successfully uploaded %d artifact(s) to log area",
-            len(artifacts),
-            extra={"user_log": True},
-        )
 
     def __upload(
         self, context, log, name, main_suite_id, sub_suite_id
