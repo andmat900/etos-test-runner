@@ -263,14 +263,11 @@ class TestRunner:
             if self.iut_monitoring.monitoring:
                 self.logger.info("Stop IUT monitoring.")
                 self.iut_monitoring.stop_monitoring()
-            total_logs = len(self.log_area.logs)
-            total_artifacts = len(self.log_area.artifacts)
-            total_uploads = total_logs + total_artifacts
             self.logger.info(
                 "Log area upload finished. Total uploaded: %d (%d log(s), %d artifact(s))",
-                total_uploads,
-                total_logs,
-                total_artifacts,
+                len(self.log_area.logs) + len(self.log_area.artifacts),
+                len(self.log_area.logs),
+                len(self.log_area.artifacts),
                 extra={"user_log": True},
             )
             self.logger.info("Figure out test outcome.")
