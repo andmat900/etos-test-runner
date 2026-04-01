@@ -268,7 +268,7 @@ class TestRunner:
                     self.logger.info("Figure out test outcome.")
                     outcome = self.outcome(result, executed, description, test_framework_exit_codes)
                     pprint(outcome)
-                    self.logger.info("Call on_test_suite_finished plugin handlers.")
+                    self.logger.debug("Call on_test_suite_finished plugin handlers.")
                     self._test_suite_finished(self.config.get("name"), outcome)
         finally:
             if outcome is None:
