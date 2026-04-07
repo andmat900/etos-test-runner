@@ -227,7 +227,7 @@ class TestRunner:
         for plugin in self.plugins:
             plugin.on_test_suite_finished(name, outcome)
 
-    def _run_and_finalize(self, workspace):
+    def _run_and_finalize(self, workspace: Workspace) -> None:
         """Run tests and finalize outcome before artifact upload.
 
         Must be called inside a Workspace context so that plugin handlers
